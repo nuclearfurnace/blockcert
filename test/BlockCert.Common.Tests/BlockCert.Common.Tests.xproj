@@ -6,8 +6,8 @@
   </PropertyGroup>
   <Import Project="$(VSToolsPath)\DNX\Microsoft.DNX.Props" Condition="'$(VSToolsPath)' != ''" />
   <PropertyGroup Label="Globals">
-    <ProjectGuid>ff291f11-23f5-43e9-806f-fbda53956278</ProjectGuid>
-    <RootNamespace>BlockCert.Api.Tests</RootNamespace>
+    <ProjectGuid>48131bbf-b846-4a61-83dc-68f1a392a538</ProjectGuid>
+    <RootNamespace>BlockCert.Common.Tests</RootNamespace>
     <BaseIntermediateOutputPath Condition="'$(BaseIntermediateOutputPath)' == ''">..\..\artifacts\obj\$(MSBuildProjectName)</BaseIntermediateOutputPath>
     <OutputPath Condition="'$(OutputPath)' == ''">..\..\artifacts\bin\$(MSBuildProjectName)\</OutputPath>
   </PropertyGroup>
