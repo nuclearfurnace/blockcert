@@ -10,16 +10,15 @@ namespace BlockCert.Common.Compression
 	/// <summary>
 	/// Compression specific to domain names that are tied to keys.
 	/// </summary>
-	public static class KeyedDomain
+	public static class CompressedDomain
 	{
-		private const byte IPv4Marker = (byte)0xFF;
 		private const byte DictionaryValueMask = (byte)0x80;
 
 		private static IDictionary<string, byte> _replacements = new Dictionary<string, byte>();
 		private static IDictionary<byte, string> _backwardsReplacements = new Dictionary<byte, string>();
 		private static IComparer<string> _replacementsComparer = Comparer<string>.Create((a, b) => a.CompareTo(b));
 
-		static KeyedDomain()
+		static CompressedDomain()
 		{
 			SetDefaultDictionary();
 		}
@@ -54,84 +53,19 @@ namespace BlockCert.Common.Compression
 			return sortedDictionary;
 		}
 
-		public static byte[] Squish(KeyType keyType, string url)
+		public static byte[] Squish(string url)
 		{
-			var controlByte = KeyedDomainMetadata.None;
-			switch(keyType)
-			{
-			case KeyType.Provider:
-				controlByte |= KeyedDomainMetadata.IsProvider;
-				break;
-			case KeyType.Organization:
-				controlByte |= KeyedDomainMetadata.IsOrganization;
-				break;
-			case KeyType.Course:
-				controlByte |= KeyedDomainMetadata.IsCourse;
-				break;
-			case KeyType.Learner:
-				controlByte |= KeyedDomainMetadata.IsLearner;
-				break;
-			}
-
-			// Make sure our URI has a schema.
-			if(url.IndexOf("http") != 0)
-			{
-				url = "http://" + url;
-			}
-
-			var parsedUri = new Uri(url);
-			if(parsedUri.Scheme.ToLower() == "https")
-			{
-				controlByte |= KeyedDomainMetadata.IsHTTPS;
-			}
-
-			if(parsedUri.HostNameType == UriHostNameType.IPv4)
-			{
-				controlByte |= KeyedDomainMetadata.IsIPv4;
-			}
-
-			// Get our reduced URI as a byte array, encoded with ASCII.
-			var reducedComponents = UriComponents.AbsoluteUri ^ UriComponents.Scheme;
-			var reducedUri = parsedUri.GetComponents(reducedComponents, UriFormat.SafeUnescaped);
-			var reducedUriBuffer = Encoding.ASCII.GetBytes(reducedUri);
+			var urlBuffer = Encoding.ASCII.GetBytes(url);
 
 			// Go through all of our dictionary replacement values, and crunch what we can.
 			foreach(var replacementPair in _replacements)
 			{
 				var searchBytes = Encoding.ASCII.GetBytes(replacementPair.Key);
 				var replacementBytes = new byte[] { replacementPair.Value };
-				reducedUriBuffer = ReplaceByteSequence(reducedUriBuffer, searchBytes, replacementBytes);
+				urlBuffer = ReplaceByteSequence(urlBuffer, searchBytes, replacementBytes);
 			}
 
-      		// If this is an IPv4 address, shove it in directly as a 4-byte integer, network order.
-			if((controlByte & KeyedDomainMetadata.IsIPv4) == KeyedDomainMetadata.IsIPv4)
-      		{
-				var ipAddressString = parsedUri.Host;
-				var ipAddress = IPAddress.Parse(ipAddressString);
-				var ipAddressBytes = ipAddress.GetAddressBytes();
-
-				var markerBuf = new byte[ipAddressBytes.Length + 1];
-				markerBuf[0] = IPv4Marker;
-				Buffer.BlockCopy(ipAddressBytes, 0, markerBuf, 1, 4);
-
-				var ipAddressStringBytes = Encoding.ASCII.GetBytes(ipAddressString);
-
-				reducedUriBuffer = ReplaceByteSequence(reducedUriBuffer, ipAddressStringBytes, markerBuf);
-      		}
-
-			// Strip the end forward slash if it's there.
-			var trailingSlashOffset = 0;
-			if(reducedUriBuffer.Last() == (byte)'/')
-			{
-				trailingSlashOffset = -1;
-			}
-
-			// Push our control byte on the top.
-			var finalBuffer = new byte[reducedUriBuffer.Length + 1 + trailingSlashOffset];
-			finalBuffer[0] = (byte)controlByte;
-			Buffer.BlockCopy(reducedUriBuffer, 0, finalBuffer, 1, reducedUriBuffer.Length + trailingSlashOffset);
-
-			return finalBuffer;
+			return urlBuffer;
 		}
 
 		public static string Expand(byte[] buf)
@@ -141,38 +75,19 @@ namespace BlockCert.Common.Compression
 
 			var stream = new MemoryStream(buf);
 
-			// Figure out our metadata.
-			var domainMetadata = (KeyedDomainMetadata)stream.ReadByte();
-			var isHttps = (domainMetadata & KeyedDomainMetadata.IsHTTPS) == KeyedDomainMetadata.IsHTTPS;
-			var ipIpv4 = (domainMetadata & KeyedDomainMetadata.IsIPv4) == KeyedDomainMetadata.IsIPv4;
-
 			StringBuilder builder = new StringBuilder();
-
-			// Set our scheme.
-			builder.Append(isHttps ? "https://" : "http://");
 
 			// Expand whatever we can.
 			while(stream.Position < stream.Length)
 			{
 				var current = (byte)stream.ReadByte();
-				if(current == IPv4Marker)
+				if(_backwardsReplacements.ContainsKey(current))
 				{
-					var ipBuf = new byte[4];
-					stream.Read(ipBuf, 0, 4);
-
-					var ipAddress = new IPAddress(ipBuf);
-					builder.Append(ipAddress.ToString());
+					builder.Append(_backwardsReplacements[current]);
 				}
 				else
 				{
-					if(_backwardsReplacements.ContainsKey(current))
-					{
-						builder.Append(_backwardsReplacements[current]);
-					}
-					else
-					{
-						builder.Append((char)current);
-					}
+					builder.Append((char)current);
 				}
 			}
 
