@@ -5,12 +5,12 @@ using System.Text;
 using System.Linq;
 using System.Net;
 
-namespace BlockCert.Common.Compression
+namespace BlockCert.Common.Transaction.Compression
 {
 	/// <summary>
-	/// Compression specific to domain names that are tied to keys.
+	/// Efficient binary compression specific to domain names.
 	/// </summary>
-	public static class CompressedDomain
+	public static class DomainCompression
 	{
 		private const byte DictionaryValueMask = (byte)0x80;
 
@@ -18,16 +18,26 @@ namespace BlockCert.Common.Compression
 		private static IDictionary<byte, string> _backwardsReplacements = new Dictionary<byte, string>();
 		private static IComparer<string> _replacementsComparer = Comparer<string>.Create((a, b) => a.CompareTo(b));
 
-		static CompressedDomain()
+		static DomainCompression()
 		{
 			SetDefaultDictionary();
 		}
 
+		/// <summary>
+		/// Sets the default dictionary for compressing domains.
+		/// 
+		/// Useful for reinstantiating the default after setting a test-specific dictionary.
+		/// </summary>
 		public static void SetDefaultDictionary()
 		{
 			SetDictionary(Dictionaries.DefaultDomainDictionary);
 		}
 
+		/// <summary>
+		/// Sets a new compression dictionary.
+		/// </summary>
+		/// <returns>the updated dictionary put in place, after any transformations</returns>
+		/// <param name="dictionary">the replacement dictionary to use</param>
 		public static IDictionary<string, byte> SetDictionary(Dictionary<string, byte> dictionary)
 		{
 			// Sort the dictionary so that the largest keys get checked first.
@@ -53,9 +63,14 @@ namespace BlockCert.Common.Compression
 			return sortedDictionary;
 		}
 
-		public static byte[] Squish(string url)
+		/// <summary>
+		/// Compresses the given hostname.
+		/// </summary>
+		/// <returns>byte array of the compressed hostname</returns>
+		/// <param name="hostname">the hostname to compress</param>
+		public static byte[] Compress(string hostname)
 		{
-			var urlBuffer = Encoding.ASCII.GetBytes(url);
+			var urlBuffer = Encoding.ASCII.GetBytes(hostname);
 
 			// Go through all of our dictionary replacement values, and crunch what we can.
 			foreach(var replacementPair in _replacements)
@@ -68,7 +83,12 @@ namespace BlockCert.Common.Compression
 			return urlBuffer;
 		}
 
-		public static string Expand(byte[] buf)
+		/// <summary>
+		/// Decompresses the given buffer as a hostname.
+		/// </summary>
+		/// <returns>the decompressed hostname</returns>
+		/// <param name="buf">the buffer holding the compressed hostname</param>
+		public static string Decompress(byte[] buf)
 		{
 			if(buf.Length < 3)
 				throw new ArgumentException("buffer must be greater than 3 bytes!", "buf");
@@ -94,6 +114,13 @@ namespace BlockCert.Common.Compression
 			return builder.ToString();
 		}
 
+		/// <summary>
+		/// Replaces a given byte sequence with another.
+		/// </summary>
+		/// <returns>the modified haystack, after any replacements</returns>
+		/// <param name="haystack">the buffer to search/replace in</param>
+		/// <param name="needle">the byte sequence to search for</param>
+		/// <param name="replace">the byte sequence to replace the needle with</param>
 		public static byte[] ReplaceByteSequence(byte[] haystack, byte[] needle, byte[] replace)
 		{
 			if(haystack == null || haystack.Length == 0)
@@ -109,7 +136,8 @@ namespace BlockCert.Common.Compression
 			// Naive approach ahead: each loop, we scan the entire buffer, looking for matching
 			// sequences.  If we find one, we set a flag and then replace the sequence right then
 			// and there.  If we found a match in a given loop iteration, we restart the loop. If
-			// we didn't find a match, we break out of it and return.
+			// we didn't find a match, we break out of it and return.  We're always operating on
+			// our buffer copy.
 			while(true)
 			{
 				var foundMatch = false;

@@ -4,10 +4,15 @@ using System.IO;
 namespace BlockCert.Common.IO
 {
 	/// <summary>
-	/// A binary writer with helper methods for writing densely-packed values.
+	/// Writes densely-packed primitive data types as binary values to a stream in a specific encoding.
 	/// </summary>
 	public class DenseBinaryWriter : BinaryWriter
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="BlockCert.Common.IO.DenseBinaryWriter"/> class
+		/// based on the specified stream and using UTF-8 encoding.
+		/// </summary>
+		/// <param name="output">the output stream</param>
 		public DenseBinaryWriter(Stream output) : base(output)
 		{
 		}

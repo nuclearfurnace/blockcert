@@ -7,11 +7,11 @@ using System.Net;
 
 namespace BlockCert.Common.Tests.Transaction.Compression
 {
-	public class CompressedDomainTest : IDisposable
+	public class DomainCompressionTest : IDisposable
 	{
 		private static IDictionary<string, byte> TestDictionary;
 
-		public CompressedDomainTest()
+		public DomainCompressionTest()
 		{
 			var testDictionary = new Dictionary<string, byte>() {
 				{"www.", 1},
@@ -20,21 +20,21 @@ namespace BlockCert.Common.Tests.Transaction.Compression
 				{".uk", 4},
 				{".ac.uk", 5},
 			};
-			TestDictionary = CompressedDomain.SetDictionary(testDictionary);
+			TestDictionary = DomainCompression.SetDictionary(testDictionary);
 		}
 
 		public void Dispose()
 		{
-			CompressedDomain.SetDefaultDictionary();
+			DomainCompression.SetDefaultDictionary();
 		}
 
     	[Fact]
 		public void TestReplaceByteSequenceThrowsOnInvalidInputs()
 		{
-      		Assert.Throws<ArgumentException>(() => CompressedDomain.ReplaceByteSequence(null, null, null));
-      		Assert.Throws<ArgumentException>(() => CompressedDomain.ReplaceByteSequence(null, new byte[] {}, null));
-      		Assert.Throws<ArgumentException>(() => CompressedDomain.ReplaceByteSequence(new byte[] {}, null, null));
-      		Assert.Throws<ArgumentException>(() => CompressedDomain.ReplaceByteSequence(new byte[] {}, new byte[] {}, null));
+      		Assert.Throws<ArgumentException>(() => DomainCompression.ReplaceByteSequence(null, null, null));
+      		Assert.Throws<ArgumentException>(() => DomainCompression.ReplaceByteSequence(null, new byte[] {}, null));
+      		Assert.Throws<ArgumentException>(() => DomainCompression.ReplaceByteSequence(new byte[] {}, null, null));
+      		Assert.Throws<ArgumentException>(() => DomainCompression.ReplaceByteSequence(new byte[] {}, new byte[] {}, null));
 		}
 
   		[Fact]
@@ -45,7 +45,7 @@ namespace BlockCert.Common.Tests.Transaction.Compression
 			var replace = ByteStream.Create("aaa.").ToBytes();
 			var expected = ByteStream.Create("www.edx.org").ToBytes();
 
-			var result = CompressedDomain.ReplaceByteSequence(haystack, needle, replace);
+			var result = DomainCompression.ReplaceByteSequence(haystack, needle, replace);
 			Assert.Equal(expected, result);
 		}
 
@@ -57,7 +57,7 @@ namespace BlockCert.Common.Tests.Transaction.Compression
 			var replace = ByteStream.Create("zzz.").ToBytes();
 			var expected = ByteStream.Create("zzz.edx.org").ToBytes();
 
-			var result = CompressedDomain.ReplaceByteSequence(haystack, needle, replace);
+			var result = DomainCompression.ReplaceByteSequence(haystack, needle, replace);
 			Assert.Equal(expected, result);
 		}
 
@@ -69,7 +69,7 @@ namespace BlockCert.Common.Tests.Transaction.Compression
 			var replace = ByteStream.Create("bb").ToBytes();
 			var expected = ByteStream.Create("www.bb.org/bb").ToBytes();
 
-			var result = CompressedDomain.ReplaceByteSequence(haystack, needle, replace);
+			var result = DomainCompression.ReplaceByteSequence(haystack, needle, replace);
 			Assert.Equal(expected, result);
 		}
 
@@ -83,7 +83,7 @@ namespace BlockCert.Common.Tests.Transaction.Compression
 				.Add(TestDictionary[".org"])
 				.ToBytes();
 
-			var result = CompressedDomain.Squish(uri);
+			var result = DomainCompression.Compress(uri);
 			Assert.Equal(expectedByteStream, result);
 		}
 
@@ -97,7 +97,7 @@ namespace BlockCert.Common.Tests.Transaction.Compression
 				.Add(TestDictionary[".ac.uk"])
 				.ToBytes();
 
-			var result = CompressedDomain.Squish(uri);
+			var result = DomainCompression.Compress(uri);
 			Assert.Equal(expectedByteStream, result);
 		}
 
@@ -107,8 +107,8 @@ namespace BlockCert.Common.Tests.Transaction.Compression
 		[InlineData("www.cam.ac.uk", "www.cam.ac.uk")]
 		public void TestSquishExpand(string input, string expected)
 		{
-			var squished = CompressedDomain.Squish(input);
-			var expanded = CompressedDomain.Expand(squished);
+			var squished = DomainCompression.Compress(input);
+			var expanded = DomainCompression.Decompress(squished);
 
 			Assert.Equal(expected, expanded);
 		}

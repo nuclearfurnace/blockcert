@@ -45,12 +45,17 @@ namespace BlockCert.Common.Transaction
 		private const byte StopMarker = (byte)0xFF;
 
 		public TransactionMetadata Metadata { get; set; }
+		public TransactionVersion Version { get; set; }
 		public string Provider { get; set; }
 		public string Organization { get; set; }
 		public int Course { get; set; }
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="BlockCert.Common.Transaction.TransactionData"/> class.
+		/// </summary>
 		public TransactionData()
 		{
+			Version = TransactionVersion.VersionSyncopate;
 		}
 
 		public byte[] ToBytes()
@@ -60,20 +65,18 @@ namespace BlockCert.Common.Transaction
 
 			// Put in the transaction metadata/version.
 			builder.Write((byte)Metadata);
-			builder.Write((byte)TransactionVersion.VersionSyncopate);
+			builder.Write((byte)Version);
 
-			// Stick in the provider.
-			builder.Write(CompressedDomain.Squish(Provider));
+			// Stick in the provider and organization.  End both with the
+			// stop marker do the decoder know how to split things up.
+			builder.Write(DomainCompression.Compress(Provider));
+			builder.Write(StopMarker);
+			builder.Write(DomainCompression.Compress(Organization));
 			builder.Write(StopMarker);
 
-			// Stick in the organization.
-			builder.Write(CompressedDomain.Squish(Organization));
-			builder.Write(StopMarker);
-
-			// Anddd the course.
+			// Write the course ID as a variable integer.
 			builder.WriteVariableInteger(Course);
 
-			// Fin.
 			return stream.ToArray();
 		}
 
@@ -81,17 +84,25 @@ namespace BlockCert.Common.Transaction
 		{
 			var reader = new DenseBinaryReader(stream);
 
+			// Pull out the transaction metadata and version.  Right now, we
+			// only support one verion (Syncopate) but future code might require
+			// knowing the transaction version for reading newer fields, etc.
 			var txMetadata = (TransactionMetadata)reader.ReadByte();
 			var txVersion = (TransactionVersion)reader.ReadByte();
 
+			// Grab the raw bytes for the provider and organization.
 			var providerRaw = reader.ReadUntil(StopMarker);
 			var organizationRaw = reader.ReadUntil(StopMarker);
+
+			// Read the course ID.
 			var course = reader.ReadVariableInteger();
 
-			var provider = CompressedDomain.Expand(providerRaw);
-			var organization = CompressedDomain.Expand(organizationRaw);
+			// Decompress the provider and organization.
+			var provider = DomainCompression.Decompress(providerRaw);
+			var organization = DomainCompression.Decompress(organizationRaw);
 
 			return new TransactionData() {
+				Version = txVersion,
 				Metadata = txMetadata,
 				Provider = provider,
 				Organization = organization,
@@ -103,7 +114,8 @@ namespace BlockCert.Common.Transaction
 
 		public bool Equals(TransactionData other)
 		{
-			return Metadata.Equals(other.Metadata)
+			return Version.Equals(other.Version)
+				&& Metadata.Equals(other.Metadata)
 				&& Provider.Equals(other.Provider)
 				&& Organization.Equals(other.Organization)
 				&& Course.Equals(other.Course);

@@ -4,10 +4,15 @@ using System.IO;
 namespace BlockCert.Common.IO
 {
 	/// <summary>
-	/// A binary reader with helper methods for reading densely-packed values.
+	/// Reads densely-packed primitive data types as binary values from a stream in a specific encoding.
 	/// </summary>
 	public class DenseBinaryReader : BinaryReader
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="BlockCert.Common.IO.DenseBinaryReader"/> class
+		/// based on the specified stream and using UTF-8 encoding.
+		/// </summary>
+		/// <param name="input">the input stream</param>
 		public DenseBinaryReader(Stream input) : base(input)
 		{
 		}

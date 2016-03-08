@@ -16,8 +16,8 @@ namespace BlockCert.Common
 		/// </summary>
 		Organization,
 		/// <summary>
-		/// A course represents a given course as well as course run.  Harvard's CS50, a semester
-		/// apart, would not represent the same "course" in the eyes of BlockCert.
+		/// A course represents a given course, inclusive of the course run.  Harvard's CS50,
+		/// a semester apart, would not represent the same "course" in the eyes of BlockCert.
 		/// </summary>
 		Course,
 		/// <summary>
