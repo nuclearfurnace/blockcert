@@ -3369,14 +3369,14 @@
       "NBitcoin/3.0.0.16": {
         "type": "package",
         "compile": {
-          "lib/portable-net45+win+wpa81+Xamarin.iOS10+MonoAndroid10+MonoTouch10/NBitcoin.BouncyCastle.dll": {},
-          "lib/portable-net45+win+wpa81+Xamarin.iOS10+MonoAndroid10+MonoTouch10/NBitcoin.dll": {},
-          "lib/portable-net45+win+wpa81+Xamarin.iOS10+MonoAndroid10+MonoTouch10/Newtonsoft.Json.dll": {}
+          "lib/portable-net45+win+wpa81+wp80+Xamarin.iOS10+MonoAndroid10+MonoTouch10/NBitcoin.BouncyCastle.dll": {},
+          "lib/portable-net45+win+wpa81+wp80+Xamarin.iOS10+MonoAndroid10+MonoTouch10/NBitcoin.dll": {},
+          "lib/portable-net45+win+wpa81+wp80+Xamarin.iOS10+MonoAndroid10+MonoTouch10/Newtonsoft.Json.dll": {}
         },
         "runtime": {
-          "lib/portable-net45+win+wpa81+Xamarin.iOS10+MonoAndroid10+MonoTouch10/NBitcoin.BouncyCastle.dll": {},
-          "lib/portable-net45+win+wpa81+Xamarin.iOS10+MonoAndroid10+MonoTouch10/NBitcoin.dll": {},
-          "lib/portable-net45+win+wpa81+Xamarin.iOS10+MonoAndroid10+MonoTouch10/Newtonsoft.Json.dll": {}
+          "lib/portable-net45+win+wpa81+wp80+Xamarin.iOS10+MonoAndroid10+MonoTouch10/NBitcoin.BouncyCastle.dll": {},
+          "lib/portable-net45+win+wpa81+wp80+Xamarin.iOS10+MonoAndroid10+MonoTouch10/NBitcoin.dll": {},
+          "lib/portable-net45+win+wpa81+wp80+Xamarin.iOS10+MonoAndroid10+MonoTouch10/Newtonsoft.Json.dll": {}
         }
       },
       "Newtonsoft.Json/7.0.1": {
@@ -9999,14 +9999,14 @@
       "NBitcoin/3.0.0.16": {
         "type": "package",
         "compile": {
-          "lib/portable-net45+win+wpa81+Xamarin.iOS10+MonoAndroid10+MonoTouch10/NBitcoin.BouncyCastle.dll": {},
-          "lib/portable-net45+win+wpa81+Xamarin.iOS10+MonoAndroid10+MonoTouch10/NBitcoin.dll": {},
-          "lib/portable-net45+win+wpa81+Xamarin.iOS10+MonoAndroid10+MonoTouch10/Newtonsoft.Json.dll": {}
+          "lib/portable-net45+win+wpa81+wp80+Xamarin.iOS10+MonoAndroid10+MonoTouch10/NBitcoin.BouncyCastle.dll": {},
+          "lib/portable-net45+win+wpa81+wp80+Xamarin.iOS10+MonoAndroid10+MonoTouch10/NBitcoin.dll": {},
+          "lib/portable-net45+win+wpa81+wp80+Xamarin.iOS10+MonoAndroid10+MonoTouch10/Newtonsoft.Json.dll": {}
         },
         "runtime": {
-          "lib/portable-net45+win+wpa81+Xamarin.iOS10+MonoAndroid10+MonoTouch10/NBitcoin.BouncyCastle.dll": {},
-          "lib/portable-net45+win+wpa81+Xamarin.iOS10+MonoAndroid10+MonoTouch10/NBitcoin.dll": {},
-          "lib/portable-net45+win+wpa81+Xamarin.iOS10+MonoAndroid10+MonoTouch10/Newtonsoft.Json.dll": {}
+          "lib/portable-net45+win+wpa81+wp80+Xamarin.iOS10+MonoAndroid10+MonoTouch10/NBitcoin.BouncyCastle.dll": {},
+          "lib/portable-net45+win+wpa81+wp80+Xamarin.iOS10+MonoAndroid10+MonoTouch10/NBitcoin.dll": {},
+          "lib/portable-net45+win+wpa81+wp80+Xamarin.iOS10+MonoAndroid10+MonoTouch10/Newtonsoft.Json.dll": {}
         }
       },
       "Newtonsoft.Json/7.0.1": {
@@ -12721,14 +12721,14 @@
       "NBitcoin/3.0.0.16": {
         "type": "package",
         "compile": {
-          "lib/portable-net45+win+wpa81+Xamarin.iOS10+MonoAndroid10+MonoTouch10/NBitcoin.BouncyCastle.dll": {},
-          "lib/portable-net45+win+wpa81+Xamarin.iOS10+MonoAndroid10+MonoTouch10/NBitcoin.dll": {},
-          "lib/portable-net45+win+wpa81+Xamarin.iOS10+MonoAndroid10+MonoTouch10/Newtonsoft.Json.dll": {}
+          "lib/portable-net45+win+wpa81+wp80+Xamarin.iOS10+MonoAndroid10+MonoTouch10/NBitcoin.BouncyCastle.dll": {},
+          "lib/portable-net45+win+wpa81+wp80+Xamarin.iOS10+MonoAndroid10+MonoTouch10/NBitcoin.dll": {},
+          "lib/portable-net45+win+wpa81+wp80+Xamarin.iOS10+MonoAndroid10+MonoTouch10/Newtonsoft.Json.dll": {}
         },
         "runtime": {
-          "lib/portable-net45+win+wpa81+Xamarin.iOS10+MonoAndroid10+MonoTouch10/NBitcoin.BouncyCastle.dll": {},
-          "lib/portable-net45+win+wpa81+Xamarin.iOS10+MonoAndroid10+MonoTouch10/NBitcoin.dll": {},
-          "lib/portable-net45+win+wpa81+Xamarin.iOS10+MonoAndroid10+MonoTouch10/Newtonsoft.Json.dll": {}
+          "lib/portable-net45+win+wpa81+wp80+Xamarin.iOS10+MonoAndroid10+MonoTouch10/NBitcoin.BouncyCastle.dll": {},
+          "lib/portable-net45+win+wpa81+wp80+Xamarin.iOS10+MonoAndroid10+MonoTouch10/NBitcoin.dll": {},
+          "lib/portable-net45+win+wpa81+wp80+Xamarin.iOS10+MonoAndroid10+MonoTouch10/Newtonsoft.Json.dll": {}
         }
       },
       "Newtonsoft.Json/7.0.1": {

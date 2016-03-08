@@ -32,6 +32,7 @@ namespace BlockCert.Common.IO
 			var startPosition = BaseStream.Position;
 			var stopPosition = startPosition;
 
+			// Find the next instance of the sentinel value, or hit the EOF.
 			while(BaseStream.Position < BaseStream.Length)
 			{
 				var current = ReadByte();
@@ -43,7 +44,16 @@ namespace BlockCert.Common.IO
 				stopPosition++;
 			}
 
-			return ReadBytes((int)(stopPosition - startPosition));
+			// Swing back to where we started.
+			BaseStream.Seek(startPosition, SeekOrigin.Begin);
+
+			// Read everything from the start point up until the sentinel value, or EOF.
+			var buf = ReadBytes((int)(stopPosition - startPosition));
+
+			// Skip over the sentinel value.
+			ReadByte();
+
+			return buf;
 		}
 	}
 }

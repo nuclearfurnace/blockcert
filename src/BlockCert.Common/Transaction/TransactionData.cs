@@ -2,6 +2,7 @@
 using System.IO;
 using BlockCert.Common.Transaction.Compression;
 using BlockCert.Common.IO;
+using System.Linq;
 
 namespace BlockCert.Common.Transaction
 {
