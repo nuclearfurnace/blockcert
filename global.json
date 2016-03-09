@@ -1,7 +1,0 @@
-﻿{
-  "projects": [ "src", "test" ],
-  "sources": [ "src", "test" ],
-	"sdk": {
-		"version": "1.0.0-rc1-final"
-	}
-}

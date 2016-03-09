@@ -1,0 +1,38 @@
+.spaced {
+  margin-bottom: 2rem;
+}
+
+.spaced-small {
+  margin-bottom: 1rem;
+}
+
+.qrcode-container-256 {
+  position: relative;
+  left: 50%;
+  margin-left: -128px;
+  width: 256px
+}
+
+.hard-callout, .hard-header h4 {
+  font-weight: bold;
+}
+
+.softer-text {
+  color: #333333;
+}
+
+.big-stat-name {
+  font-size: 1.6rem;
+}
+
+.big-stat-value {
+  font-size: 3rem;
+}
+
+p + .big-stat-value {
+  margin-top: -2rem;
+}
+
+p.select-help-text {
+  margin-top: 0;
+}
