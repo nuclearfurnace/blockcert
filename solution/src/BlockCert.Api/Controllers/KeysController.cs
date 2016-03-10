@@ -8,6 +8,8 @@ using BlockCert.Api.Database.Models;
 using BlockCert.Api.Database.Validation;
 using BlockCert.Api.Transformations;
 using BlockCert.Api.Database;
+using BlockCert.Api.Results;
+using System.Threading;
 
 namespace BlockCert.Api.Controllers
 {
@@ -47,6 +49,25 @@ namespace BlockCert.Api.Controllers
 			_context.SaveChanges();
 
 			return typedKey;
+		}
+
+		[HttpGet("counts")]
+		public KeyCounts Counts()
+		{
+			var perKeyCounts = _context.Keys.GroupBy(k => k.KeyType).Select(k => new { Name = k.Key, Count = k.Count() }).AsEnumerable();
+			var totalKeyCount = perKeyCounts.Select(k => k.Count).Sum();
+
+			var keyCounts = new KeyCounts();
+			keyCounts.Total = totalKeyCount;
+
+			foreach(var count in perKeyCounts)
+			{
+				keyCounts.AddCount(count.Name, count.Count);
+			}
+
+			Thread.Sleep(1500);
+
+			return keyCounts;
 		}
 	}
 }

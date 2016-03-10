@@ -1,21 +1,17 @@
 var React = require('react')
+var SmartFetch = require('utility/SmartFetch')
 
 var Landing = React.createClass({
   getInitialState: function() {
-    return { keys: { total: '...', types: [] } }
+    return { keys: { total: '...', types: {} } }
   },
   componentDidMount: function() {
-    this.serverRequest = $.get('/keys/counts', function(data) {
-      var total = 0;
-      for(var i = 0; i < data.counts.length; i++) {
-        total = total + data.counts[i].count;
-      }
-
-      this.setState({ keys: { total: total, types: data.counts } })
-    }.bind(this));
+    SmartFetch('/api/keys/counts')
+      .then(function(data) {
+        this.setState({ keys: { total: data.total, types: data.counts } })
+      }.bind(this));
   },
   componentWillUnmount: function() {
-    this.serverRequest.abort()
   },
   render: function() {
     return (
@@ -43,10 +39,8 @@ var Landing = React.createClass({
     )
   },
   getKeyCount: function(type) {
-    for(var i = 0; i < this.state.keys.types.length; i++) {
-      if(this.state.keys.types[i].key_type == type) {
-        return this.state.keys.types[i].count.toLocaleString()
-      }
+    if(this.state.keys.types[type]) {
+      return this.state.keys.types[type].toLocaleString()
     }
 
     return 0

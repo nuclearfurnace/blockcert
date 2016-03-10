@@ -37,6 +37,10 @@
     "react-select": "1.0.0-beta10",
     "jquery": ">= 2.1.4",
     "react-debounce-input": "2.0.2",
-    "moment": "2.11.2"
+    "moment": "2.11.2",
+    "es6-promise": "3.1.2",
+    "whatwg-fetch": "0.11.0",
+    "imports-loader": "0.6.5",
+    "exports-loader": "0.6.3"
   }
 }
