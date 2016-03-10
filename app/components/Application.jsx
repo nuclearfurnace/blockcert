@@ -5,7 +5,7 @@ var Application = React.createClass({
   render: function() {
     return (
       <div id="content">
-        <div>
+        <div className="spaced">
           <div className="top-bar search-bar">
             <div className="top-bar-left">
               <ul className="dropdown menu">
