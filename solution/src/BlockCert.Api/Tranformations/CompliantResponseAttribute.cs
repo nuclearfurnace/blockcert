@@ -11,7 +11,7 @@ namespace BlockCert.Api.Transformations
 		{
 			// If an exception occured, mark it handled and wrap it as a compliant response.
 			if (context.Exception != null && !context.ExceptionHandled) {
-				context.Result = CompliantResponseHelper.AsObjectResult (ResponseType.Error, context.Exception.Message);
+				context.Result = CompliantResponseHelper.AsObjectResult(ResponseType.Error, null, context.Exception.Message);
 				context.ExceptionHandled = true;
 				return;
 			}
@@ -20,7 +20,7 @@ namespace BlockCert.Api.Transformations
 			ObjectResult objectResult = context.Result as ObjectResult;
 			if (objectResult != null) {
 				var responseType = ResponseTypeHelper.ClassifyObjectResult(objectResult);
-				context.Result = CompliantResponseHelper.AsObjectResult(responseType, objectResult.Value);
+				context.Result = CompliantResponseHelper.AsObjectResult(responseType, objectResult.Value, null);
 			}
 		}
 	}

@@ -55,8 +55,8 @@ namespace BlockCert.Api.Transformations.Http
 		/// <returns>the wrapped CompliantResponse</returns>
 		/// <param name="responseType">the ResponseType for this response</param>
 		/// <param name="data">any data associated with this response</param>
-		public static ObjectResult AsObjectResult(ResponseType responseType, object data) {
-			var response = new CompliantResponse () { Data = data };
+		public static ObjectResult AsObjectResult(ResponseType responseType, object data, string message) {
+			var response = new CompliantResponse () { Data = data, Message = message };
 			switch (responseType) {
 			case ResponseType.Fail:
 				response.Status = "fail";
