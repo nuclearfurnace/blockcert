@@ -15,7 +15,8 @@
 		"Microsoft.Extensions.Logging": "1.0.0-rc1-final",
 		"Microsoft.Extensions.Logging.Console": "1.0.0-rc1-final",
 		"Microsoft.Extensions.Logging.Debug": "1.0.0-rc1-final",
-		"NBitcoin": "3.0.0.16"
+		"NBitcoin": "3.0.0.16",
+		"Swashbuckle": "6.0.0-rc1-final"
 	},
 	"commands": {
 		"web": "Microsoft.AspNet.Server.Kestrel",

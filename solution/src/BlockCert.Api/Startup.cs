@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Data.Entity;
 using BlockCert.Api.Database;
+using Swashbuckle.SwaggerGen;
 
 namespace BlockCert.Api
 {
@@ -37,6 +38,20 @@ namespace BlockCert.Api
 			services.AddEntityFramework()
 				.AddNpgsql()
 				.AddDbContext<BlockCertContext>(options => options.UseNpgsql(connectionString));
+
+			services.AddSwaggerGen();
+			services.ConfigureSwaggerDocument(options => {
+				options.SingleApiVersion(new Info {
+					Version = "v1",
+					Title = "BlockCert",
+					Description = "An API for the BlockCert verification service.",
+					TermsOfService = ""
+				});
+			});
+
+			services.ConfigureSwaggerSchema(options => {
+				options.DescribeAllEnumsAsStrings = true;
+			});
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -51,6 +66,9 @@ namespace BlockCert.Api
 			app.UseStaticFiles();
 
 			app.UseMvc();
+
+			app.UseSwaggerGen();
+			app.UseSwaggerUi();
 		}
 
 		// Entry point for the application.
