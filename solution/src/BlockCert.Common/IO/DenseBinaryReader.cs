@@ -27,12 +27,11 @@ namespace BlockCert.Common.IO
 		}
 
 		/// <summary>
-		/// Reads an arbitrary amount of bytes from the stream until a sentinel
-		/// value is encountered.
+		/// Reads an arbitrary amount of bytes terminated by a NUL byte.
 		/// </summary>
-		/// <returns>the bytes read, without the sentinel value</returns>
+		/// <returns>the bytes read, without the NUL byte</returns>
 		/// <param name="sentinel">the sentinel value to read until</param>
-		public byte[] ReadUntil(byte sentinel)
+		public byte[] ReadNullTerminatedSequence()
 		{
 			var startPosition = BaseStream.Position;
 			var stopPosition = startPosition;
@@ -41,7 +40,7 @@ namespace BlockCert.Common.IO
 			while(BaseStream.Position < BaseStream.Length)
 			{
 				var current = ReadByte();
-				if(current == sentinel)
+				if(current == 0x00)
 				{
 					break;
 				}
@@ -55,10 +54,17 @@ namespace BlockCert.Common.IO
 			// Read everything from the start point up until the sentinel value, or EOF.
 			var buf = ReadBytes((int)(stopPosition - startPosition));
 
-			// Skip over the sentinel value.
+			// Skip over the NUL byte.
 			ReadByte();
 
 			return buf;
+		}
+
+		public T ReadEnumeration<T>()
+			where T : struct, IConvertible, IFormattable, IComparable
+		{
+			var enumRaw = base.ReadByte();
+			return (T)Enum.Parse(typeof(T), enumRaw.ToString());
 		}
 	}
 }

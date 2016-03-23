@@ -1,31 +1,25 @@
 ﻿using System;
 using System.Text;
 using Xunit;
-using BlockCert.Common.Transaction.Compression;
+using BlockCert.Common.Compression;
 using System.Collections.Generic;
 using System.Net;
 
-namespace BlockCert.Common.Tests.Transaction.Compression
+namespace BlockCert.Common.Tests.Compression
 {
-	public class DomainCompressionTest : IDisposable
+	public class DomainCompressionTest
 	{
-		private static IDictionary<string, byte> TestDictionary;
+		private IDictionary<string, byte> TestDictionary;
 
 		public DomainCompressionTest()
 		{
-			var testDictionary = new Dictionary<string, byte>() {
+			TestDictionary = new Dictionary<string, byte>() {
 				{"www.", 1},
 				{".org", 2},
 				{".edu", 3},
 				{".uk", 4},
 				{".ac.uk", 5},
 			};
-			TestDictionary = DomainCompression.SetDictionary(testDictionary);
-		}
-
-		public void Dispose()
-		{
-			DomainCompression.SetDefaultDictionary();
 		}
 
     	[Fact]
@@ -76,28 +70,34 @@ namespace BlockCert.Common.Tests.Transaction.Compression
 		[Fact]
 		public void TestSquishSimple()
 		{
+			var domainCompression = new DomainCompression();
+			var modifiedTestDictionary = domainCompression.SetDictionary(TestDictionary);
+
 			var uri = "www.edx.org";
 			var expectedByteStream = ByteStream.Create()
-				.Add(TestDictionary["www."])
+				.Add(modifiedTestDictionary["www."])
 				.Add("edx")
-				.Add(TestDictionary[".org"])
+				.Add(modifiedTestDictionary[".org"])
 				.ToBytes();
 
-			var result = DomainCompression.Compress(uri);
+			var result = domainCompression.Compress(uri);
 			Assert.Equal(expectedByteStream, result);
 		}
 
 		[Fact]
 		public void TestSquishDictionaryOrdering()
 		{
+			var domainCompression = new DomainCompression();
+			var modifiedTestDictionary = domainCompression.SetDictionary(TestDictionary);
+
 			var uri = "www.cam.ac.uk";
 			var expectedByteStream = ByteStream.Create()
-				.Add(TestDictionary["www."])
+				.Add(modifiedTestDictionary["www."])
 				.Add("cam")
-				.Add(TestDictionary[".ac.uk"])
+				.Add(modifiedTestDictionary[".ac.uk"])
 				.ToBytes();
 
-			var result = DomainCompression.Compress(uri);
+			var result = domainCompression.Compress(uri);
 			Assert.Equal(expectedByteStream, result);
 		}
 
@@ -107,8 +107,11 @@ namespace BlockCert.Common.Tests.Transaction.Compression
 		[InlineData("www.cam.ac.uk", "www.cam.ac.uk")]
 		public void TestSquishExpand(string input, string expected)
 		{
-			var squished = DomainCompression.Compress(input);
-			var expanded = DomainCompression.Decompress(squished);
+			var domainCompression = new DomainCompression();
+			var modifiedTestDictionary = domainCompression.SetDictionary(TestDictionary);
+
+			var squished = domainCompression.Compress(input);
+			var expanded = domainCompression.Decompress(squished);
 
 			Assert.Equal(expected, expanded);
 		}

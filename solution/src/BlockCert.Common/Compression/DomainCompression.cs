@@ -5,32 +5,32 @@ using System.Text;
 using System.Linq;
 using System.Net;
 
-namespace BlockCert.Common.Transaction.Compression
+namespace BlockCert.Common.Compression
 {
 	/// <summary>
 	/// Efficient binary compression specific to domain names.
 	/// </summary>
-	public static class DomainCompression
+	public class DomainCompression
 	{
 		private const byte DictionaryValueMask = (byte)0x80;
 
-		private static IDictionary<string, byte> _replacements = new Dictionary<string, byte>();
-		private static IDictionary<byte, string> _backwardsReplacements = new Dictionary<byte, string>();
-		private static IComparer<string> _replacementsComparer = Comparer<string>.Create((a, b) => a.CompareTo(b));
+		private IDictionary<string, byte> _forwardReplacements;
+		private IDictionary<byte, string> _backwardsReplacements;
+		private static IComparer<string> _replacementComparator = Comparer<string>.Create((a, b) => {
+			// Sort by length, and then lexicographically.
+			var result = b.Length.CompareTo(a.Length);
+			return result == 0 ? b.CompareTo(a) : result;
+		});
 
-		static DomainCompression()
+		public DomainCompression()
 		{
-			SetDefaultDictionary();
+			_forwardReplacements = new Dictionary<string, byte>();
+			_backwardsReplacements = new Dictionary<byte, string>();
 		}
 
-		/// <summary>
-		/// Sets the default dictionary for compressing domains.
-		/// 
-		/// Useful for reinstantiating the default after setting a test-specific dictionary.
-		/// </summary>
-		public static void SetDefaultDictionary()
+		private static byte MaskReplacementValue(byte replacementValue)
 		{
-			SetDictionary(Dictionaries.DefaultDomainDictionary);
+			return (byte)(replacementValue | DictionaryValueMask);
 		}
 
 		/// <summary>
@@ -38,29 +38,21 @@ namespace BlockCert.Common.Transaction.Compression
 		/// </summary>
 		/// <returns>the updated dictionary put in place, after any transformations</returns>
 		/// <param name="dictionary">the replacement dictionary to use</param>
-		public static IDictionary<string, byte> SetDictionary(Dictionary<string, byte> dictionary)
+		public IDictionary<string, byte> SetDictionary(IDictionary<string, byte> dictionary)
 		{
-			// Sort the dictionary so that the largest keys get checked first.
-			// This ensures we're always making the most efficient replacements
-			// i.e. replacing '.ac.uk' instead of '.uk' on 'www.cam.ac.uk'.
-			var sortedDictionary = new SortedDictionary<string, byte>(_replacementsComparer);
-			var backwardsDictionary = new Dictionary<byte, string>();
-
 			// Make sure all of our replacements can fit above the ASCII range.
 			foreach(var replacementPair in dictionary)
 			{
 				if(replacementPair.Value > DictionaryValueMask)
 					throw new InvalidDataException("replacement characters can't be higher than 0x80");
-
-				var upshiftedValue = (byte)(replacementPair.Value | DictionaryValueMask);
-				sortedDictionary.Add(replacementPair.Key, upshiftedValue);
-				backwardsDictionary.Add(upshiftedValue, replacementPair.Key);
 			}
 
-			_replacements = sortedDictionary;
-			_backwardsReplacements = backwardsDictionary;
+			var maskedValues = dictionary.ToDictionary(o => o.Key, o => MaskReplacementValue(o.Value));
 
-			return sortedDictionary;
+			_forwardReplacements = new SortedDictionary<string, byte>(maskedValues, _replacementComparator);
+			_backwardsReplacements = maskedValues.ToDictionary(o => o.Value, o => o.Key);
+
+			return new SortedDictionary<string, byte>(maskedValues, _replacementComparator);
 		}
 
 		/// <summary>
@@ -68,12 +60,12 @@ namespace BlockCert.Common.Transaction.Compression
 		/// </summary>
 		/// <returns>byte array of the compressed hostname</returns>
 		/// <param name="hostname">the hostname to compress</param>
-		public static byte[] Compress(string hostname)
+		public byte[] Compress(string hostname)
 		{
 			var urlBuffer = Encoding.ASCII.GetBytes(hostname);
 
 			// Go through all of our dictionary replacement values, and crunch what we can.
-			foreach(var replacementPair in _replacements)
+			foreach(var replacementPair in _forwardReplacements)
 			{
 				var searchBytes = Encoding.ASCII.GetBytes(replacementPair.Key);
 				var replacementBytes = new byte[] { replacementPair.Value };
@@ -88,7 +80,7 @@ namespace BlockCert.Common.Transaction.Compression
 		/// </summary>
 		/// <returns>the decompressed hostname</returns>
 		/// <param name="buf">the buffer holding the compressed hostname</param>
-		public static string Decompress(byte[] buf)
+		public string Decompress(byte[] buf)
 		{
 			if(buf.Length < 3)
 				throw new ArgumentException("buffer must be greater than 3 bytes!", "buf");

@@ -25,5 +25,15 @@ namespace BlockCert.Common.IO
 		{
 			base.Write7BitEncodedInt(value);
 		}
+
+		/// <summary>
+		/// Writes a buffer that is terminated with a NUL byte.
+		/// </summary>
+		/// <param name="buf">the buffer to write</param>
+		public void WriteNullTerminatedSequence(byte[] buf)
+		{
+			base.Write(buf);
+			base.Write((byte)0x00);
+		}
 	}
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace BlockCert.Common.Transaction.Compression
+namespace BlockCert.Common.Compression
 {
 	/// <summary>
 	/// Collection of dictionaries tailored to specific compression schemes.

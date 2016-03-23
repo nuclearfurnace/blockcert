@@ -65,8 +65,6 @@ namespace BlockCert.Api.Controllers
 				keyCounts.AddCount(count.Name, count.Count);
 			}
 
-			Thread.Sleep(1500);
-
 			return keyCounts;
 		}
 	}

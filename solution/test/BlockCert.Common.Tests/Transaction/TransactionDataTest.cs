@@ -2,6 +2,8 @@
 using Xunit;
 using BlockCert.Common.Transaction;
 using System.IO;
+using System.Linq;
+using BlockCert.Common.Tests.Operations;
 
 namespace BlockCert.Common.Tests.Transaction
 {
@@ -10,17 +12,25 @@ namespace BlockCert.Common.Tests.Transaction
 		[Fact]
 		public void TestTransactionSerializationDeserialization()
 		{
-			var tx = new TransactionData() {
-				Metadata = TransactionMetadata.Issuance,
-				Provider = "edx.org",
-				Organization = "mit.edu",
-				Course = 123456
-			};
+			// Create our outgoing transaction.
+			var outputOperation = new MockOperation("woohoo!");
+			var outputTx = new TransactionData();
+			outputTx.SetOperation(outputOperation);
 
-			var serialized = tx.ToBytes();
-			var deserialized = TransactionData.FromStream(new MemoryStream(serialized));
+			// Serialize it.
+			var outputStream = new MemoryStream();
+			outputTx.ToStream(outputStream);
 
-			Assert.Equal(tx, deserialized);
+			// Read in our transaction.
+			var inputStream = new MemoryStream(outputStream.ToArray());
+
+			var inputTx = new TransactionData();
+			inputTx.FromStream(inputStream);
+
+			var inputOperation = inputTx.GetOperation<MockOperation>();
+
+			Assert.Equal(outputOperation, inputOperation, new GenericEqualityComparer<MockOperation>());
+			Assert.Equal(outputTx, inputTx);
 		}
 	}
 }

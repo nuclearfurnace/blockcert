@@ -3,6 +3,10 @@
   "version": 2,
   "targets": {
     "DNX,Version=v4.5.1": {
+      "BlockCert.Common/1.0.0": {
+        "type": "project",
+        "framework": "DNX,Version=v4.5.1"
+      },
       "Microsoft.Dnx.Compilation.Abstractions/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -253,6 +257,10 @@
       }
     },
     "DNXCore,Version=v5.0": {
+      "BlockCert.Common/1.0.0": {
+        "type": "project",
+        "framework": "DNXCore,Version=v5.0"
+      },
       "Microsoft.Dnx.Compilation.Abstractions/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -1136,6 +1144,10 @@
       }
     },
     "DNX,Version=v4.5.1/osx.10.10-x86": {
+      "BlockCert.Common/1.0.0": {
+        "type": "project",
+        "framework": "DNX,Version=v4.5.1"
+      },
       "Microsoft.Dnx.Compilation.Abstractions/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -1386,6 +1398,10 @@
       }
     },
     "DNX,Version=v4.5.1/osx.10.10-x64": {
+      "BlockCert.Common/1.0.0": {
+        "type": "project",
+        "framework": "DNX,Version=v4.5.1"
+      },
       "Microsoft.Dnx.Compilation.Abstractions/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -1636,6 +1652,10 @@
       }
     },
     "DNXCore,Version=v5.0/osx.10.10-x86": {
+      "BlockCert.Common/1.0.0": {
+        "type": "project",
+        "framework": "DNXCore,Version=v5.0"
+      },
       "Microsoft.Dnx.Compilation.Abstractions/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -2519,6 +2539,10 @@
       }
     },
     "DNXCore,Version=v5.0/osx.10.10-x64": {
+      "BlockCert.Common/1.0.0": {
+        "type": "project",
+        "framework": "DNXCore,Version=v5.0"
+      },
       "Microsoft.Dnx.Compilation.Abstractions/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -3762,6 +3786,10 @@
     }
   },
   "libraries": {
+    "BlockCert.Common/1.0.0": {
+      "type": "project",
+      "path": "../../src/BlockCert.Common/project.json"
+    },
     "Microsoft.Dnx.Compilation.Abstractions/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
