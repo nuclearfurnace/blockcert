@@ -2,9 +2,9 @@
 
 ### Abstract
 
-Many MOOC (_massive open online course_) providers offer certifications on the completion of courses that they offer.  For learners, this represents a way for them to prove that they've taken and completed a course, or courses.  As employers increasingly find themselves receptive to considering experience coming from MOOCs, there is no decentralized-yet-authentic method for a third party, like a prospective employer, to verify that a candidate has received the certifications they claim to.
+Many MOOC (_massive open online course_) providers offer certifications on the completion of courses that they offer.  For learners, this represents a way to prove that they've taken and completed a course, or courses.  As employers increasingly find themselves receptive to considering experience coming from MOOCs, there is no decentralized-yet-provable method for a third party, like a prospective employer, to verify that a candidate has received the certifications they claim to.
 
-BlockCert is an open specification that, with low-cost Bitcoin transactions, stores learner certifications on the Bitcoin blockchain -- a decentralized ledger with attractive security and integrity properties -- which can be introspected by anyone.  Utilizing the concept of Bitcoin addresses -- addresses are derived from private keys, so having the private key is tantamount to proving you "own" the address -- we can demonstrate that a MOOC provider, and other parties involved in a MOOC, have agreed that a learner has passed a course.  Third parties are then able to find these transactions on the blockchain and verify, for themselves, that the learner in fact passed the course.
+BlockCert is an open specification that, with low-cost Bitcoin transactions, stores a record of learner certifications on the Bitcoin blockchain -- a decentralized ledger with attractive security and integrity properties -- which can be inspected by anyone.  Utilizing the concept of Bitcoin addresses -- where addresses are derived from private keys, and thus having the private key is tantamount to proving you "own" the address -- we can demonstrate that a MOOC provider, and other parties involved in a MOOC, have agreed that a learner has passed a course.  Third parties are then able to find these transactions on the blockchain and verify, for themselves, that the learner has in fact passed the course.
 
 ### Key Concepts
 
@@ -18,21 +18,21 @@ For providers and organizations to be verified, we need a system that people tru
 
 ### Learner Verification
 
-While we can demonstrate that a MOOC provider and organization have verified a learner to have passed a course, there is still an issue of proving that you, the learner, are the owner of the address where the verification was sent.
+While we can store a record on the blockchain verifying that a learner has passed a course, there is still an issue of proving that you, the learner, are the owner of the address where the verification was sent.
 
-Our current solution to this problem is to utilize "shared knowledge" -- pieces of information known only to you and to third parties who you cared to prove your verifications to.  When hashed cryptographically, these pieces of information can be stored in the blockchain, using the learner's address.  A third party can hash these values for themselves, and verify that it exists on the blockchain from the same address that received a certification.
+Our current solution to this problem is to utilize "shared knowledge" -- pieces of information known only to you and to third parties who you cared to prove that you passed courses to.  When hashed cryptographically, these pieces of information can be stored in the blockchain, using the learner's address.  A third party can hash these values for themselves, and verify that they exists on the blockchain from the same address that received a certification.
 
-In the case of employment, you usually share a few pieces of personal information with human resources: address, contact information, Social Security number, and others.  By and large, this information is treated as confidential and so there is a reasonable expectation that nobody else should know all of it.
+In the case of employment, you usually share a few pieces of personal information with human resources: address, contact information, Social Security number, and more.  By and large, this information is treated as confidential and so there is a reasonable expectation that nobody else should know all of it.
 
-For BlockCert, we leverage that fact by generating a message -- containing these pieces of information -- and then generating the crytographically secure message digest of the message.  Once we have it, we send a transaction from the learner's address with this digest in the metadata.
+For BlockCert, we leverage that fact by taking all of this information and generating a cryptographiclly-secure message digest of it.  This means that with the same information, anyone can generate the message digest and compare the output to see if it's the same.  It also means that it is computationally infeasible to reverse the message digest;  we can store it in plain sight.  Once we have the digest, we send a transaction from the learner's address with the digest in the metadata.  It's now stored, permanently and durably, on the blockchain.
 
-For a third party to verify that a person is in fact the learner at a given address, they can perform the same message digest procedure based on information given from the person, and verify that the given address has sent a transaction with the same information.
+For a third party to verify that a person is in fact the learner at a given address, they can perform the same message digest procedure based on information given from the person, and verify that the given address has sent a transaction with the same message digest.
 
-Better still, as technology progresses and there are more ways to securely prove your identity -- standardized formats for fingerprint data, hardware tokens, etc -- further transactions can be sent from the same address, providing an upgrade path to use a continually stronger message, making it harder and harder for someone to fake from the outside.
+Better still, as technology progresses and there are more ways to securely prove your identity -- standardized formats for fingerprint data, hardware tokens, etc -- further transactions can be sent from the same address, providing an upgrade path to use a continually stronger combination of pieces of information, making it harder and harder for someone to fake from the outside.
 
-One thing to note is that this method of verification also leans on the human aspect: by utilizing personal information in the message digest, someone is less likely to take courses on behalf on another, and then provide this personal information to the other person for the purpose of being able to verify the courses elsewhere.  There are few pieces of information that both represent an individual uniquely and that are truly hard to prevent transfer of, or to fake.  Fingerprints and DNA are not easily spoofed by regular individuals, but there is a technical hurdle in being able to provide them to a generic third party in a consistent format and in a timely fashion.
+One thing to note is that this method of learner verification also leans on the human aspect: by utilizing personal information in the message digest, someone is less likely to take courses on behalf on another, and then provide this personal information to the other person for the purpose of being able to verify the courses elsewhere.  There are few pieces of information that both represent an individual uniquely and that are truly hard to prevent transfer of, or to fake.  Fingerprints and DNA are not easily spoofed by regular individuals, but there is a technical hurdle in being able to provide them to a generic third party in a consistent format and in a timely fashion.
 
-While learner verification depends on strong pieces of information, we are still limited by current technical capabilities in this area.  Our protocol is designed to handle whatever future discoveries or inventions come along.
+While learner verification depends on strong pieces of information, we are still limited by current technical capabilities in this area.  Our protocol is designed with the intent to allow a natural upgrade path to better identifying marks if and when they discovered or created.
 
 ### Bitcoin Explained
 
@@ -44,19 +44,19 @@ As transactions are happening continuously, so is the generation of "blocks".  A
 
 If an attacker wanted to change a transaction in a block, they would be changing the overall signature for that block.  Any blocks after it would also have their signatures change, as a cascading effect, since their signature depends on the signature of the block before them.
 
-Since the blockchain is replicated across so many systems, and these systems operate in a majority mode -- if 3 systems think a change is valid, and 2 don't, the change happens -- it is not feasible for an attacker to change the "history" in the blockchain.  They would have to spend an extremely large sum of money to make sure enough systems accepted their modified version of history as valid.  Based on current network data, and the currently available mining systems, this cost would be in the tens of millions of dollars to execute.{}
+Since the blockchain is replicated across so many systems, and these systems operate in a majority mode -- if 3 systems think a change is valid, and 2 don't, the change happens -- it is not feasible for an attacker to change the "history" in the blockchain.  They would have to spend an extremely large sum of money to make sure enough systems accepted their modified version of history as valid.  Based on current network data, and the currently available mining systems, this cost would be in the tens of millions of dollars.
 
 ### BlockCert protocol
 
-The BlockCert protocol is designed to occupy the 40 bytes of space available in an OP_RETURN script.  This means transaction data small, often specifying pointers to other entities which can be further traversed in order to specify the full scope or context of an operation.
+The BlockCert protocol is designed to occupy the 40 bytes of space available in an OP_RETURN script.  This means transaction data is kept small, often specifying pointers to other entities which can be further traversed in order to specify the full scope or context of an operation.
 
 #### Freshness Warning!
 
-The follow information on the BlockCert protocol should be considered a living reference: new versions of the protocol may be expected in the future, which could have backward-incompatible changes.  This document represents the first version (**Syncopate**, also referred to **BlockCert Syncopate**) of the protocol.
+The follow information on the BlockCert protocol should be considered a living reference: new versions of the protocol may be released in the future, potentially with backward-incompatible changes.  This document represents the first version (**Syncopate**, also referred to **BlockCert Syncopate**) of the protocol.
 
 #### Transaction Header
 
-All transactions start with two values: the version of the protocol and the operation.  These values are each 1 byte.
+All transactions start with three values: the mgic value, the version of the protocol, and the operation.  The magic value is two bytes, and the other values are each 1 byte.
 
 The version of the protocol is not expected to change often, because there are only a few simple operations required to fulfill the BlockCert use case: issuing and revoking certifications, and the length of data available to us in OP_RETURN scripts is not likely to change.  It does give us the ability to support any changes to the Bitcoin protocol in the future, along with possibly migrating to other blockchains or systems entirely, such as Ethereum.
 
