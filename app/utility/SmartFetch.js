@@ -1,4 +1,15 @@
 var SmartFetch = function(url, options) {
+  // If mode is set, and is 'json', set the headers and body to be JSON.
+  if(options && options.mode && options.mode == 'json')
+  {
+    options.headers = {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
+
+    options.body = JSON.stringify(options.body)
+  }
+
   return fetch(url, options)
     .then(function(response) {
       // We always expect to get back JSON.

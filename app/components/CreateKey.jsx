@@ -1,4 +1,5 @@
 var React = require('react')
+var SmartFetch = require('utility/SmartFetch')
 var Modal = require('react-modal')
 var QRCode = require('qrcode.react')
 
@@ -107,29 +108,18 @@ var CreateKey = React.createClass({
 
     var keyName = this.refs.keyName.value
     var keyType = this.refs.keyType.value
+    var data = { keyName: keyName, keyType: keyType }
 
-    this.serverRequest = $.ajax({
-      url: '/keys/create',
-      type: 'POST',
-      data: JSON.stringify({ keyName: keyName, keyType: keyType }),
-      dataType: 'json',
-      contentType: 'application/json; charset=utf-8',
-      success: function(data) {
-        this.setState({ privateKey: data.result.key_private, keyModalShowing: true })
-      }.bind(this),
-      error: function(xhr) {
-        try {
-          var data = $.parseJSON(xhr.responseText)
-          if(data.errors) {
-            this.setState({ formErrors: data.errors })
-          }
-        } catch(e) {
-        }
-      }.bind(this),
-      complete: function() {
+    SmartFetch('/api/keys/create', { method: 'post', mode: 'json', body: data })
+      .then(function(data) {
+        this.setState({ privateKey: data.privateKey, keyModalShowing: true })
+      }.bind(this))
+      .then(function() {
         this.setState({ submitDisabled: false })
-      }.bind(this)
-    })
+      }.bind(this))
+      .catch(function(err) {
+        this.setState({ formErrors: [err] })
+      }.bind(this))
   }
 })
 
